@@ -3,9 +3,8 @@
 namespace spec\EricksonReyes\DomainDrivenDesign\ValueObject;
 
 use EricksonReyes\DomainDrivenDesign\ValueObject\Currency;
-use Faker\Factory;
-use Faker\Generator;
 use PhpSpec\ObjectBehavior;
+use spec\EricksonReyes\SeederAwareUnitTest;
 
 /**
  * Class CurrencySpec
@@ -14,20 +13,12 @@ use PhpSpec\ObjectBehavior;
  */
 class CurrencySpec extends ObjectBehavior
 {
-    /**
-     * @var Generator;
-     */
-    private Generator $seeder;
+    use SeederAwareUnitTest;
 
     /**
      * @var string
      */
     private string $code;
-
-    public function __construct()
-    {
-        $this->seeder = Factory::create();
-    }
 
     public function let(): void
     {
