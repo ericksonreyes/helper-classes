@@ -24,3 +24,17 @@ services:
       - "./vendor:/var/www/html/vendor:delegated"
       - "./bin:/var/www/html/bin:delegated"
     tty: true
+
+  coveralls:
+    build:
+      context: .
+      dockerfile: docker/php.Dockerfile
+    volumes:
+      - "./:/var/www/html"
+      - "./vendor:/var/www/html/vendor:delegated"
+      - "./bin:/var/www/html/bin:delegated"
+    tty: true
+    environment:
+      - TRAVIS=${TRAVIS}
+      - TRAVIS_BUILD_NUMBER=${TRAVIS_BUILD_NUMBER}
+      - TRAVIS_JOB_ID=${TRAVIS_JOB_ID}
