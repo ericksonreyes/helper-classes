@@ -1,0 +1,11 @@
+/vendor/
+/build/logs/*
+/bin
+/.idea
+/nbproject/
+/build/logs/clover.xml
+.DS_Store
+.env
+composer.phar
+phpspec.yml
+cghooks.lock

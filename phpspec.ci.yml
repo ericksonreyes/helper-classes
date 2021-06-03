@@ -1,0 +1,12 @@
+formatter.name: dot
+stop_on_failure: true
+
+extensions:
+  LeanPHP\PhpSpec\CodeCoverage\CodeCoverageExtension:
+    format:
+      - clover
+      - text
+      - html
+    output:
+      clover: ./build/logs/clover.xml
+      html: ./build/logs/phpspec_coverage

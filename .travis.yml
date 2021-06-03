@@ -1,0 +1,20 @@
+language: php
+
+php:
+  - 8.0
+
+services:
+  - docker
+
+fast_finish: true
+
+sudo: false
+
+before_script:
+  - docker-compose run --rm composer install --no-progress
+
+script:
+  - docker-compose run --rm ./bin/phing
+
+after_success:
+  - bin/php-coveralls -v
