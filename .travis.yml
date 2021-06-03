@@ -23,7 +23,7 @@ before_script:
   - docker-compose run --rm composer install --no-progress
 
 script:
-  - docker-compose run --rm ./bin/phing
+  - docker-compose run --rm php bin/phing
 
 after_success:
-  - bin/php-coveralls -v
+  - docker-compose run --rm php bin/php-coveralls -v
