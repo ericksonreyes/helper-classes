@@ -2,12 +2,15 @@
 
 namespace EricksonReyes\DomainDrivenDesign\ValueObject;
 
+use EricksonReyes\DomainDrivenDesign\ValueObject\Exceptions\MismatchedCurrenciesException;
+
 /**
  * Class Money
  * @package EricksonReyes\DomainDrivenDesign\ValueObject
  */
 class Money
 {
+    public const ERROR_MISMATCHED_CURRENCIES = 'Currencies must match.';
 
     /**
      * @var int
@@ -45,23 +48,6 @@ class Money
     public function currency(): Currency
     {
         return $this->currency;
-    }
-
-    /**
-     * @param Money $aMoney
-     * @return bool
-     */
-    public function matches(Money $aMoney): bool
-    {
-        if ($this->currencyDoesNotMatch($aMoney)) {
-            return false;
-        }
-
-        if ($this->amountDoesNotMatch($aMoney)) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
@@ -120,10 +106,22 @@ class Money
 
     /**
      * @param Money $anotherMoney
+     * @return bool
+     */
+    public function matches(Money $anotherMoney): bool
+    {
+        $this->currenciesMustMatch($anotherMoney);
+        return $this->amountMatches($anotherMoney->amount());
+    }
+
+    /**
+     * @param Money $anotherMoney
      * @return true
      */
     public function isLessThan(Money $anotherMoney): bool
     {
+        $this->currenciesMustMatch($anotherMoney);
+        ;
         return $this->amount() < $anotherMoney->amount();
     }
 
@@ -133,6 +131,8 @@ class Money
      */
     public function isLessThanOrEqualTo(Money $anotherMoney): bool
     {
+        $this->currenciesMustMatch($anotherMoney);
+        ;
         return $this->amount() <= $anotherMoney->amount();
     }
 
@@ -142,6 +142,8 @@ class Money
      */
     public function isGreaterThanOrEqualTo(Money $anotherMoney): bool
     {
+        $this->currenciesMustMatch($anotherMoney);
+        ;
         return $this->amount() >= $anotherMoney->amount();
     }
 
@@ -151,6 +153,18 @@ class Money
      */
     public function isGreaterThan(Money $anotherMoney):bool
     {
+        $this->currenciesMustMatch($anotherMoney);
+        ;
         return $this->amount() > $anotherMoney->amount();
+    }
+
+    /**
+     * @param Money $anotherMoney
+     */
+    private function currenciesMustMatch(Money $anotherMoney): void
+    {
+        if ($this->currency()->code() !== $anotherMoney->currency()->code()) {
+            throw new MismatchedCurrenciesException(Money::ERROR_MISMATCHED_CURRENCIES);
+        }
     }
 }

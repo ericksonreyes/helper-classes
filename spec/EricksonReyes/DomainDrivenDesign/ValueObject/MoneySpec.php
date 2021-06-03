@@ -3,6 +3,7 @@
 namespace spec\EricksonReyes\DomainDrivenDesign\ValueObject;
 
 use EricksonReyes\DomainDrivenDesign\ValueObject\Currency;
+use EricksonReyes\DomainDrivenDesign\ValueObject\Exceptions\MismatchedCurrenciesException;
 use EricksonReyes\DomainDrivenDesign\ValueObject\Money;
 use PhpSpec\ObjectBehavior;
 use spec\EricksonReyes\SeederAwareUnitTest;
@@ -47,22 +48,6 @@ class MoneySpec extends ObjectBehavior
     {
         $this->amount()->shouldReturn($this->amount);
     }
-
-    public function it_can_compared_for_mismatching_currencies(Money $anotherMoney, Currency $anotherCurrency): void
-    {
-        while (true) {
-            $anotherCurrencyCode = $this->seeder->currencyCode;
-            if ($anotherCurrencyCode !== $this->currency->code()) {
-                $anotherCurrency->code()->shouldBeCalled()->willReturn($anotherCurrencyCode);
-                $anotherMoney->currency()->shouldBeCalled()->willReturn($anotherCurrency);
-                break;
-            }
-        }
-
-        $this->matches($anotherMoney)->shouldReturn(false);
-        $this->doesNotMatch($anotherMoney)->shouldReturn(true);
-    }
-
 
     public function it_can_be_compared_against_a_money_with_greater_amount(Money $aMoneyWithABiggerAmount): void
     {
@@ -151,5 +136,36 @@ class MoneySpec extends ObjectBehavior
         $this->amountIsLessThan($aLesserAmount)->shouldReturn(false);
         $this->amountMatches($aLesserAmount)->shouldReturn(false);
         $this->amountIsGreaterThan($aLesserAmount)->shouldReturn(true);
+    }
+
+    public function it_prevents_comparison_between_money_with_mismatched_currencies(
+        Money $aMoneyWithADifferentCurrency
+    ) {
+        $comparisonMethods = [
+            'matches',
+            'doesNotMatch',
+            'isLessThan',
+            'isLessThanOrEqualTo',
+            'isGreaterThan',
+            'isGreaterThanOrEqualTo'
+        ];
+
+        while (true) {
+            $aDifferentCountryCode = $this->seeder->currencyCode;
+            if ($aDifferentCountryCode !== $this->currency->code()) {
+                $aMoneyWithDifferentCurrency = new Currency($aDifferentCountryCode);
+                $aMoneyWithADifferentCurrency->currency()->shouldBeCalled()->willReturn($aMoneyWithDifferentCurrency);
+                break;
+            }
+        }
+
+        foreach ($comparisonMethods as $comparisonMethod) {
+            $this->shouldThrow(MismatchedCurrenciesException::class)->during(
+                $comparisonMethod,
+                [
+                    $aMoneyWithADifferentCurrency
+                ]
+            );
+        }
     }
 }
