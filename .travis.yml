@@ -3,24 +3,15 @@ language: php
 php:
   - 8.0
 
-services:
-  - docker
-
 fast_finish: true
 
 sudo: false
 
-before_install:
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/1.27.2/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-
 before_script:
-  - docker-compose run --rm composer install --no-progress
+  - composer install --no-progress
 
 script:
-  - docker-compose run --rm php bin/phing
+  - php bin/phing
 
 after_success:
-  - docker-compose run --rm php bin/php-coveralls -v
+  - php bin/php-coveralls -v
